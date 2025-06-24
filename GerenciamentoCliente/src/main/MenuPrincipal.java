@@ -1,4 +1,4 @@
-package manus;
+package main;
 
 
 import java.util.InputMismatchException;

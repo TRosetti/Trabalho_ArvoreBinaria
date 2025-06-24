@@ -1,4 +1,4 @@
-package manus;
+package main;
 
 
 public class NoArv {
