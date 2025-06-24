@@ -24,7 +24,7 @@ public class MenuPrincipal {
             exibirMenuPrincipal();
         } else {
             System.out.println("Número ou senha incorretos. Acesso negado.\n");
-            acessoAoSistema(); // Tenta novamente
+            acessoAoSistema();
         }
     }
 
@@ -32,11 +32,11 @@ public class MenuPrincipal {
         int opcao;
         do {
             System.out.println("\n--- Menu Principal ---");
-            System.out.println("1. Cadastrar Cliente");
+            System.out.println("1. Cadastrar novo Cliente");
             System.out.println("2. Consultar Dados Pessoais de um Cliente");
             System.out.println("3. Listar Clientes em Ordem Alfabética");
             System.out.println("4. Consultar a Média de Saldos dos Clientes");
-            System.out.println("5. Listar o Cliente com Maior Saldo no Banco");
+            System.out.println("5. Buscar  o Cliente com Maior Saldo no Banco");
             System.out.println("6. Excluir Cliente");
             System.out.println("7. Atualizar Dados do Cliente");
             System.out.println("0. Sair");
@@ -44,7 +44,7 @@ public class MenuPrincipal {
 
             try {
                 opcao = scanner.nextInt();
-                scanner.nextLine(); // Consumir a nova linha
+                scanner.nextLine(); 
 
                 switch (opcao) {
                     case 1:
@@ -54,13 +54,16 @@ public class MenuPrincipal {
                         consultarCliente();
                         break;
                     case 3:
+                        System.out.println("\n--- Clientes em Ordem Alfabética ---");
                         arvoreClientes.listarEmOrdemAlfabetica();
+                        System.out.println("-------------------------------------");
                         break;
                     case 4:
                         consultarMediaSaldos();
                         break;
                     case 5:
-                        arvoreClientes.listarClienteMaiorSaldo();
+                        System.out.println(arvoreClientes.listarClienteMaiorSaldo());
+                        
                         break;
                     case 6:
                         excluirCliente();
@@ -76,8 +79,8 @@ public class MenuPrincipal {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida. Por favor, digite um número.");
-                scanner.nextLine(); // Limpar o buffer do scanner
-                opcao = -1; // Para continuar o loop
+                scanner.nextLine();
+                opcao = -1; 
             }
         } while (opcao != 0);
     }
@@ -88,10 +91,10 @@ public class MenuPrincipal {
         double saldo;
 
         System.out.print("Nome: ");
-        nome = scanner.nextLine().trim();
+        nome = scanner.nextLine().toLowerCase().trim();
 
         System.out.print("CPF (apenas números): ");
-        cpf = scanner.nextLine().replaceAll("[^\\d]", "");  // tira tudo que não for numero 
+        cpf = scanner.nextLine().replaceAll("[^\\d]", "");  // tira tudo que não for numero REGEX 
         if (!validarCpf(cpf)) {
             System.out.println("Erro: CPF inválido. Deve conter 11 dígitos numéricos.");
             return;
@@ -110,19 +113,25 @@ public class MenuPrincipal {
         try {
             System.out.print("Saldo: ");
             saldo = scanner.nextDouble();
-            scanner.nextLine(); // Consumir a nova linha
+            scanner.nextLine(); 
             if (saldo < 0) {
                 System.out.println("Erro: Saldo não pode ser negativo.");
                 return;
             }
         } catch (InputMismatchException e) {
             System.out.println("Erro: Saldo inválido. Por favor, digite um número.");
-            scanner.nextLine(); // Limpar o buffer do scanner
+            scanner.nextLine();
             return;
         }
 
         Cliente novoCliente = new Cliente(nome.toLowerCase(), cpf, telefone, email.toLowerCase(), saldo);
-        arvoreClientes.inserir(new Item(novoCliente));
+        
+        if(arvoreClientes.inserir(new Item(novoCliente))){
+            arvoreClientes.inserir(new Item(novoCliente));
+            System.out.println("Cliente cadastrado com sucesso!");
+        }else{
+            System.out.println("Erro: Cliente com este nome já existe!");
+        }
     }
     
     private static void consultarCliente() {
@@ -151,14 +160,21 @@ public class MenuPrincipal {
     private static void excluirCliente() {
         System.out.println("\n--- Excluir Cliente ---");
         System.out.print("Digite o nome do cliente a ser excluído: ");
-        String nome = scanner.nextLine();
-        arvoreClientes.remover(nome);
+        String nome = scanner.nextLine().toLowerCase().trim();
+
+        if (arvoreClientes.remover(nome)){
+             arvoreClientes.remover(nome);
+               System.out.println("Cliente removido com sucesso!");
+        }else{
+            System.out.println("Erro: Cliente não encontrado para remoção!");
+        }
+       
     }
 
     private static void atualizarDadosCliente() {
         System.out.println("\n--- Atualizar Dados do Cliente ---");
         System.out.print("Digite o nome do cliente para atualizar: ");
-        String nome = scanner.nextLine();
+        String nome = scanner.nextLine().toLowerCase().trim();
 
         Cliente clienteExistente = arvoreClientes.pesquisarPorNome(nome);
         if (clienteExistente == null) {
@@ -201,7 +217,13 @@ public class MenuPrincipal {
             }
         }
 
-        arvoreClientes.atualizarDadosCliente(nome, novoTelefone, novoEmail, novoSaldo);
+        if(arvoreClientes.atualizarDadosCliente(nome, novoTelefone, novoEmail, novoSaldo)){
+            System.out.println("Dados do cliente atualizados com sucesso!");
+        }else{
+            System.out.println("Erro: Cliente não encontrado para atualização!");
+        }
+
+        
     }
 
     private static boolean validarCpf(String cpf) {

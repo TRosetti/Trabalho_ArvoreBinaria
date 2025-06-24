@@ -22,21 +22,19 @@ public class Arvore {
         return this.quantNos;
     }
 
-    // Inserir cliente na árvore
     public boolean inserir(Item elem) {
-        // Verifica se o nome ou CPF já existem
         if (pesquisarPorNome(elem.getCliente().getNome()) != null) {
-            System.out.println("Erro: Cliente com este nome já existe!");
+            
             return false;
         }
         if (pesquisarPorCpf(elem.getCliente().getCpf()) != null) {
-            System.out.println("Erro: Cliente com este CPF já existe!");
+            
             return false;
         }
 
         this.raiz = inserir(elem, this.raiz);
         this.quantNos++;
-        System.out.println("Cliente cadastrado com sucesso!");
+        
         return true;
     }
 
@@ -45,7 +43,7 @@ public class Arvore {
             NoArv novo = new NoArv(elem);
             return novo;
         } else {
-            // Compara pelo nome do cliente (chave)
+    
             if (elem.getChave().compareTo(no.getInfo().getChave()) < 0) {
                 no.setEsq(inserir(elem, no.getEsq()));
                 return no;
@@ -98,16 +96,17 @@ public class Arvore {
         if (pesquisarPorNome(chave, this.raiz) != null) {
             this.raiz = remover(chave, this.raiz);
             this.quantNos--;
-            System.out.println("Cliente removido com sucesso!");
+          
             return true;
         } else {
-            System.out.println("Erro: Cliente não encontrado para remoção!");
+            
             return false;
         }
     }
 
     private NoArv remover(String chave, NoArv arv) {
-        if (arv == null) return null;
+        if (arv == null) 
+            return null;
 
         if (chave.compareTo(arv.getInfo().getChave()) < 0) {
             arv.setEsq(remover(chave, arv.getEsq()));
@@ -139,12 +138,10 @@ public class Arvore {
     // Listar clientes em ordem alfabética (percurso em ordem central)
     public void listarEmOrdemAlfabetica() {
         if (eVazia()) {
-            System.out.println("A árvore está vazia. Nenhum cliente para listar.");
             return;
         }
-        System.out.println("\n--- Clientes em Ordem Alfabética ---");
         listarEmOrdemAlfabetica(this.raiz);
-        System.out.println("-------------------------------------");
+        
     }
 
     private void listarEmOrdemAlfabetica(NoArv no) {
@@ -174,21 +171,20 @@ public class Arvore {
     }
 
     // Listar o cliente com maior saldo no banco
-    public void listarClienteMaiorSaldo() {
+    public String listarClienteMaiorSaldo() {
         if (eVazia()) {
-            System.out.println("A árvore está vazia. Nenhum cliente para listar.");
-            return;
+            return "A árvore está vazia. Nenhum cliente para listar.";
         }
 
         double maiorSaldo = encontrarMaiorSaldo(this.raiz);
-        System.out.println("\n--- Cliente(s) com Maior Saldo (" + maiorSaldo + ") ---");
+        
         exibirClientesComSaldo(this.raiz, maiorSaldo);
-        System.out.println("---------------------------------------------------");
+        return "\n--- Cliente(s) com Maior Saldo (" + maiorSaldo + ") ---";
     }
 
     private double encontrarMaiorSaldo(NoArv no) {
         if (no == null) {
-            return 0.0; // Valor mínimo para iniciar a comparação
+            return 0.0; 
         }
         double maxEsq = encontrarMaiorSaldo(no.getEsq());
         double maxDir = encontrarMaiorSaldo(no.getDir());
@@ -212,115 +208,14 @@ public class Arvore {
             cliente.setTelefone(novoTelefone);
             cliente.setEmail(novoEmail);
             cliente.setSaldo(novoSaldo);
-            System.out.println("Dados do cliente atualizados com sucesso!");
+            
             return true;
         } else {
-            System.out.println("Erro: Cliente não encontrado para atualização!");
+            
             return false;
         }
     }
 
-    // Métodos de percurso (mantidos, mas o CamCentral foi adaptado para listar nomes)
-    public Item[] CamCentral() {
-        int[] n = new int[1];
-        Item[] vet = new Item[this.quantNos];
-        return FazCamCentral(this.raiz, vet, n);
-    }
-
-    private Item[] FazCamCentral(NoArv arv, Item[] vet, int[] n) {
-        if (arv != null) {
-            vet = FazCamCentral(arv.getEsq(), vet, n);
-            vet[n[0]++] = arv.getInfo();
-            vet = FazCamCentral(arv.getDir(), vet, n);
-        }
-        return vet;
-    }
-
-    public Item[] CamPreFixado() {
-        int[] n = new int[1];
-        Item[] vet = new Item[this.quantNos];
-        return FazCamPreFixado(this.raiz, vet, n);
-    }
-
-    private Item[] FazCamPreFixado(NoArv arv, Item[] vet, int[] n) {
-        if (arv != null) {
-            vet[n[0]++] = arv.getInfo();
-            vet = FazCamPreFixado(arv.getEsq(), vet, n);
-            vet = FazCamPreFixado(arv.getDir(), vet, n);
-        }
-        return vet;
-    }
-
-    public Item[] CamPosFixado() {
-        int[] n = new int[1];
-        Item[] vet = new Item[this.quantNos];
-        return FazCamPosFixado(this.raiz, vet, n);
-    }
-
-    private Item[] FazCamPosFixado(NoArv arv, Item[] vet, int[] n) {
-        if (arv != null) {
-            vet = FazCamPosFixado(arv.getEsq(), vet, n);
-            vet = FazCamPosFixado(arv.getDir(), vet, n);
-            vet[n[0]++] = arv.getInfo();
-        }
-        return vet;
-    }
-
     
-    public void mostrarFolhas() {
-        System.out.print("Nós folhas: ");
-        mostrarFolhasRec(this.raiz);
-        System.out.println();
-    }
-
-    private void mostrarFolhasRec(NoArv no) {
-        if (no != null) {
-            if (no.getEsq() == null && no.getDir() == null) {
-                System.out.print(no.getInfo().getChave() + " ");
-            }
-            mostrarFolhasRec(no.getEsq());
-            mostrarFolhasRec(no.getDir());
-        }
-    }
-
-    public int altura() {
-        return alturaRec(this.raiz);
-    }
-
-    private int alturaRec(NoArv no) {
-        if (no == null) return -1;
-        int esq = alturaRec(no.getEsq());
-        int dir = alturaRec(no.getDir());
-        return 1 + Math.max(esq, dir);
-    }
-
-    public int totalFolhas() {
-        return contarFolhasRec(this.raiz);
-    }
-
-    private int contarFolhasRec(NoArv no) {
-        if (no == null) return 0;
-        if (no.getEsq() == null && no.getDir() == null) return 1;
-        return contarFolhasRec(no.getEsq()) + contarFolhasRec(no.getDir());
-    }
-
-    public int totalNosInternos() {
-        return contarNosInternosRec(this.raiz);
-    }
-
-    private int contarNosInternosRec(NoArv no) {
-        if (no == null || (no.getEsq() == null && no.getDir() == null)) return 0;
-        return 1 + contarNosInternosRec(no.getEsq()) + contarNosInternosRec(no.getDir());
-    }
-
-    public int totalNosNoNivel(int nivel) {
-        return contarNivelRec(this.raiz, 0, nivel);
-    }
-
-    private int contarNivelRec(NoArv no, int atual, int alvo) {
-        if (no == null) return 0;
-        if (atual == alvo) return 1;
-        return contarNivelRec(no.getEsq(), atual + 1, alvo) + contarNivelRec(no.getDir(), atual + 1, alvo);
-    }
 }
 
