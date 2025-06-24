@@ -266,7 +266,7 @@ public class Arvore {
         return vet;
     }
 
-    // Métodos de contagem e altura (mantidos, mas não diretamente usados nas funcionalidades do briefing)
+    
     public void mostrarFolhas() {
         System.out.print("Nós folhas: ");
         mostrarFolhasRec(this.raiz);
